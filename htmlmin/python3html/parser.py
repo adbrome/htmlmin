@@ -50,7 +50,7 @@ commentclose = re.compile(r'--\s*>')
 # and http://www.w3.org/TR/html5/tokenization.html#tag-name-state
 tagfind_tolerant = re.compile(r'([a-zA-Z][^\t\n\r\f />\x00]*)(?:\s|/(?!>))*')
 attrfind_tolerant = re.compile(
-    r'((?<=[\'"\s/])[^\s/>][^\s/=>]*)(\s*=+\s*'
+    r'((?<=[\'"\s/])[^\s/>][^\s=>]*)(\s*=+\s*'
     r'(\'[^\']*\'|"[^"]*"|(?![\'"])[^>\s]*))?(?:\s|/(?!>))*')
 locatestarttagend_tolerant = re.compile(r"""
   <[a-zA-Z][^\t\n\r\f />\x00]*       # tag name
