@@ -334,6 +334,25 @@ SELF_OPENING_TEXTS = {
   ),
 }
 
+HANDLEBARS_TEMPLATES_TEXTS = {
+  'skip_handlebars_in_tag_with_attribute': (
+    '<video width="100%" autobuffer=""  poster="{{ video_poster }}" id="id-video" {{#if video_tag }}data-webp="{{ video_tag }}"{{/if}}></video>',
+    '<video width=100% autobuffer poster="{{ video_poster }}" id=id-video {{#if video_tag }}data-webp="{{ video_tag }}" {{/if}}></video>'
+  ),
+  'skip_handlebars_with_tag': (
+    '{{#if html_obj}}<div class="bottom object" id="id-bottom">{{{ html_object }}}</div>{{/if }}',
+    '{{#if html_obj}}<div class="bottom object" id=id-bottom>{{{ html_object }}}</div>{{/if }}'
+  ),
+  'skip_handlebars_outside_tag': (
+    '{{#if html_obj}}{{{ html_object }}}{{/if }}<div class="bottom object" id="id-bottom"></div>',
+    '{{#if html_obj}}{{{ html_object }}}{{/if }}<div class="bottom object" id=id-bottom></div>'
+  ),
+  'skip_handlebars_in_tag_attribute': (
+    '<div class="bottom object" style="width:70px;{{#if html_obj_index}}z-index:1100;{{/if }}" id="id-bottom">{{{ html_object }}}</div>',
+    '<div class="bottom object" style="width:70px;{{#if html_obj_index}}z-index:1100;{{/if }}" id=id-bottom>{{{ html_object }}}</div>'
+  ),
+}
+
 class HTMLMinTestMeta(type):
   def __new__(cls, name, bases, dct):
     def make_test(text):
@@ -489,6 +508,30 @@ class TestSelfClosingTags(HTMLMinTestCase):
 
 class TestSelfOpeningTags(HTMLMinTestCase):
   __reference_texts__ = SELF_OPENING_TEXTS
+
+class TestSelfHandlebarsTemplates(HTMLMinTestCase):
+  __reference_texts__ = HANDLEBARS_TEMPLATES_TEXTS
+
+  def setUp(self):
+    HTMLMinTestCase.setUp(self)
+    self.minifier = htmlmin.Minifier()
+    self.minify = self.minifier.minify
+
+  def test_skip_handlebars_in_tag_with_attribute(self):
+    text = self.__reference_texts__['skip_handlebars_in_tag_with_attribute']
+    self.assertEqual(self.minify(text[0]), text[1])
+
+  def test_skip_handlebars_with_tag(self):
+    text = self.__reference_texts__['skip_handlebars_with_tag']
+    self.assertEqual(self.minify(text[0]), text[1])
+
+  def test_skip_handlebars_outside_tag(self):
+    text = self.__reference_texts__['skip_handlebars_outside_tag']
+    self.assertEqual(self.minify(text[0]), text[1])
+
+  def test_skip_handlebars_in_tag_attribute(self):
+    text = self.__reference_texts__['skip_handlebars_in_tag_attribute']
+    self.assertEqual(self.minify(text[0]), text[1])
 
 class TestDecorator(HTMLMinTestCase):
   def test_direct_decorator(self):
